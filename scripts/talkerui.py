@@ -38,11 +38,12 @@ class Ui_talker(object):
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.nodo = QNodeT(self.logView) #create qnode to run the Publisher
         self.nodo.updateLog.connect(self.updateLogView) ##connect signal and slot of listview
-        self.nodo.rosShutdown.connect(self.close) 
+        self.nodo.rosShutdown.connect(self.close)
+
+        self.flag = False #flag to use one time
 
         self.publishButton.clicked.connect(self.talk) ## connect publish button with the talker function
         self.quitButton.clicked.connect(self.close)
-        self.flag = False #flag to use one time
 
         self.retranslateUi(talker)
         QtCore.QMetaObject.connectSlotsByName(talker)

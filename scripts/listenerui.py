@@ -7,6 +7,8 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import pyqtSlot
+from qnodelistener import QNodeL
 
 class Ui_listener(object):
     def setupUi(self, listener):
@@ -33,10 +35,19 @@ class Ui_listener(object):
         self.quitButton.setObjectName("quitButton")
         self.verticalLayout_2.addWidget(self.quitButton)
         self.horizontalLayout_2.addLayout(self.verticalLayout_2)
-        self.LogText = QtWidgets.QPlainTextEdit(self.horizontalLayoutWidget)
-        self.LogText.setObjectName("LogText")
-        self.horizontalLayout_2.addWidget(self.LogText)
+        self.logView = QtWidgets.QListView(self.horizontalLayoutWidget)
+        self.logView.setObjectName("logView")
+        self.horizontalLayout_2.addWidget(self.logView)
         self.horizontalLayout.addLayout(self.horizontalLayout_2)
+
+        self.nodo = QNodeL(self.logView) #create qnode to run the Publisher
+        self.nodo.updateLog.connect(self.updateLogView) ##connect signal and slot of listview
+        self.nodo.rosShutdown.connect(self.close)
+
+        self.flag = False #flag to use one time
+
+        self.connectButton.clicked.connect(self.talk) ## connect publish button with the talker function
+        self.quitButton.clicked.connect(self.close)
 
         self.retranslateUi(listener)
         QtCore.QMetaObject.connectSlotsByName(listener)
@@ -48,6 +59,14 @@ class Ui_listener(object):
         self.connectButton.setText(_translate("listener", "Connect"))
         self.quitButton.setText(_translate("listener", "Quit"))
 
+    def talk(self):
+        if not self.flag:
+            self.flag = True
+            self.nodo.start()
+
+    @pyqtSlot()
+    def updateLogView(self):
+        self.nodo.text_window.scrollToBottom()
 
 if __name__ == "__main__":
     import sys
@@ -57,4 +76,3 @@ if __name__ == "__main__":
     ui.setupUi(listener)
     listener.show()
     sys.exit(app.exec_())
-

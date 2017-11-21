@@ -69,7 +69,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QPlainTextEdit" name="LogText"/>
+        <widget class="QListView" name="logView"/>
        </item>
       </layout>
      </item>
