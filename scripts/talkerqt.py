@@ -5,11 +5,12 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 from talkerui import Ui_talker
 from PyQt5.QtCore import pyqtSlot
 from qnodetalker import QNodeT
+from PyQt5.uic import loadUi
 
-class MainWindow(QMainWindow, Ui_talker):
+class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.setupUi(self)
+        loadUi('talker_ui.ui', self)
         self.nodo = QNodeT(self.logView) #create qnode to run the Publisher
         self.nodo.updateLog.connect(self.updateLogView) ##connect signal and slot of listview
         self.nodo.rosShutdown.connect(self.close)
