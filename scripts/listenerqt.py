@@ -3,11 +3,32 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from listenerui import Ui_listener
+from PyQt5.QtCore import pyqtSlot
+from qnodelistener import QNodeL
 
 class MainWindow(QMainWindow, Ui_listener):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
+
+        self.nodo = QNodeL(self.logView) #create qnode to run the Publisher
+        self.nodo.updateLog.connect(self.updateLogView) ##connect signal and slot of listview
+        self.nodo.rosShutdown.connect(self.close)
+
+        self.flag = False #flag to use one time
+
+        self.connectButton.clicked.connect(self.talk) ## connect publish button with the talker function
+        self.quitButton.clicked.connect(self.close)
+
+    def talk(self):
+        if not self.flag:
+            self.flag = True
+            self.nodo.start()
+
+    @pyqtSlot()
+    def updateLogView(self):
+        self.nodo.text_window.scrollToBottom()
+
 def main():
     app = QApplication(sys.argv)
     main_window = MainWindow()

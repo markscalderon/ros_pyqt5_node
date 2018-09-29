@@ -7,8 +7,6 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import pyqtSlot
-from qnodetalker import QNodeT
 
 class Ui_talker(object):
     def setupUi(self, talker):
@@ -36,14 +34,6 @@ class Ui_talker(object):
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.nodo = QNodeT(self.logView) #create qnode to run the Publisher
-        self.nodo.updateLog.connect(self.updateLogView) ##connect signal and slot of listview
-        self.nodo.rosShutdown.connect(self.close)
-
-        self.flag = False #flag to use one time
-
-        self.publishButton.clicked.connect(self.talk) ## connect publish button with the talker function
-        self.quitButton.clicked.connect(self.close)
 
         self.retranslateUi(talker)
         QtCore.QMetaObject.connectSlotsByName(talker)
@@ -55,20 +45,3 @@ class Ui_talker(object):
         self.quitButton.setText(_translate("talker", "Quit"))
         self.publishButton.setText(_translate("talker", "Publish"))
 
-    def talk(self):
-        if not self.flag:
-            self.flag = True
-            self.nodo.start()
-
-    @pyqtSlot()
-    def updateLogView(self):
-        self.nodo.text_window.scrollToBottom()
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    talker = QtWidgets.QWidget()
-    ui = Ui_talker()
-    ui.setupUi(talker)
-    talker.show()
-    sys.exit(app.exec_())
